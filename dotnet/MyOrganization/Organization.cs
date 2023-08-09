@@ -9,6 +9,7 @@ namespace MyOrganization
     internal abstract class Organization
     {
         private Position root;
+        private int uniqueIdentifier = 1;
 
         public Organization()
         {
@@ -26,8 +27,46 @@ namespace MyOrganization
          */
         public Position? Hire(Name person, string title)
         {
-            //your code here
+            //My changes
+            var positionToFill = FindPositionByTitle(root, title);
+
+            if (positionToFill != null)
+            {
+                var newEmployee = new Employee(GenerateUniqueIdentifier(), person);
+                positionToFill.SetEmployee(newEmployee);
+                return positionToFill;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        private Position? FindPositionByTitle(Position p, string title)
+        {
+            if (p != null)
+            {
+                if (p.GetTitle() == title)
+                {
+                    return p;
+                }
+
+                foreach (Position position in p.GetDirectReports())
+                {
+                    var foundPosition = FindPositionByTitle(position, title);
+                    if (foundPosition != null)
+                    {
+                        return foundPosition;
+                    }
+                }
+            }
+
             return null;
+        }
+
+        private int GenerateUniqueIdentifier()
+        {
+
+            return uniqueIdentifier++;
         }
 
         override public string ToString()
